@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Group Loan Model Simulator - Community Asset Model</title>
+    <title>Group Loan Model Simulator - Complete Financial Model</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=DM+Sans:wght@400;500;700&display=swap');
@@ -25,6 +25,8 @@
             --accent-yellow: #F59E0B;
             --accent-red: #EF4444;
             --accent-blue: #3B82F6;
+            --accent-purple: #8B5CF6;
+            --accent-pink: #EC4899;
         }
         
         body {
@@ -60,6 +62,34 @@
             font-size: 0.95rem;
             color: var(--slate);
             font-weight: 400;
+        }
+        
+        .mode-toggle {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .mode-btn {
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            border: 2px solid var(--black);
+            background: white;
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 600;
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .mode-btn.active {
+            background: var(--black);
+            color: white;
+        }
+        
+        .mode-btn:hover:not(.active) {
+            background: var(--cream-dark);
         }
         
         .model-comparison {
@@ -168,7 +198,7 @@
             font-size: 0.95rem;
         }
         
-        .slider {
+        .slider, .input-field {
             width: 100%;
             padding: 0.75rem;
             border: 2px solid var(--cream-dark);
@@ -181,13 +211,13 @@
             transition: all 0.3s ease;
         }
         
-        .slider:focus {
+        .slider:focus, .input-field:focus {
             outline: none;
             border-color: var(--black);
             box-shadow: 0 0 0 3px rgba(10, 10, 10, 0.1);
         }
         
-        .slider:hover {
+        .slider:hover, .input-field:hover {
             border-color: var(--slate);
         }
         
@@ -238,6 +268,65 @@
             margin-top: 1rem;
         }
         
+        .flow-step {
+            background: white;
+            padding: 0.875rem;
+            border-radius: 8px;
+            margin-bottom: 0.75rem;
+            border-left: 4px solid var(--accent-blue);
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        
+        .flow-step:hover {
+            transform: translateX(4px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        }
+        
+        .flow-step-number {
+            position: absolute;
+            top: -10px;
+            left: 10px;
+            background: var(--accent-blue);
+            color: white;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.75rem;
+            font-weight: 700;
+            font-family: 'Space Grotesk', sans-serif;
+        }
+        
+        .flow-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.25rem;
+            margin-top: 0.5rem;
+        }
+        
+        .flow-name {
+            font-weight: 600;
+            color: var(--black);
+            font-size: 0.9rem;
+        }
+        
+        .flow-amount {
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 700;
+            color: var(--accent-blue);
+            font-size: 1rem;
+        }
+        
+        .flow-details {
+            font-size: 0.75rem;
+            color: var(--slate);
+            line-height: 1.4;
+        }
+        
         .income-stream {
             background: white;
             padding: 0.75rem;
@@ -278,81 +367,47 @@
             line-height: 1.4;
         }
         
-        .timeline {
-            position: relative;
-            padding-left: 2rem;
-            margin-top: 1rem;
+        .stakeholder-card {
+            background: linear-gradient(135deg, #E0E7FF 0%, #C7D2FE 100%);
+            padding: 1rem;
+            border-radius: 12px;
+            border: 2px solid #6366F1;
+            margin-bottom: 1rem;
         }
         
-        .timeline::before {
-            content: '';
-            position: absolute;
-            left: 0.5rem;
-            top: 0;
-            bottom: 0;
-            width: 2px;
-            background: var(--cream-dark);
+        .stakeholder-card.financier {
+            background: linear-gradient(135deg, #FEF3C7 0%, #FDE68A 100%);
+            border-color: var(--accent-yellow);
         }
         
-        .timeline-item {
-            position: relative;
-            margin-bottom: 1.5rem;
+        .stakeholder-card.imfuyo {
+            background: linear-gradient(135deg, #E0E7FF 0%, #C7D2FE 100%);
+            border-color: var(--accent-purple);
         }
         
-        .timeline-dot {
-            position: absolute;
-            left: -1.5rem;
-            top: 0.25rem;
-            width: 12px;
-            height: 12px;
-            border-radius: 50%;
-            background: var(--accent-green);
-            border: 2px solid white;
-            box-shadow: 0 0 0 2px var(--accent-green);
+        .stakeholder-card.farmers {
+            background: linear-gradient(135deg, #D1FAE5 0%, #A7F3D0 100%);
+            border-color: var(--accent-green);
         }
         
-        .timeline-month {
+        .stakeholder-title {
             font-family: 'Space Grotesk', sans-serif;
             font-weight: 700;
-            color: var(--black);
-            font-size: 0.9rem;
-            margin-bottom: 0.25rem;
+            font-size: 1.1rem;
+            margin-bottom: 0.75rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
         }
         
-        .timeline-event {
-            font-size: 0.8rem;
-            color: var(--slate-dark);
-            line-height: 1.4;
-        }
-        
-        .comparison-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 1rem;
-        }
-        
-        .comparison-table th,
-        .comparison-table td {
-            padding: 0.75rem;
-            text-align: left;
-            border-bottom: 1px solid var(--cream-dark);
+        .roi-badge {
+            display: inline-block;
+            padding: 0.375rem 0.875rem;
+            border-radius: 20px;
             font-size: 0.85rem;
-        }
-        
-        .comparison-table th {
-            background: var(--cream);
-            font-weight: 600;
-            color: var(--black);
-        }
-        
-        .comparison-table .better {
-            color: var(--accent-green);
-            font-weight: 600;
-        }
-        
-        .comparison-table .worse {
-            color: var(--accent-red);
-            font-weight: 600;
+            font-weight: 700;
+            background: white;
+            margin-left: auto;
         }
         
         .help-text {
@@ -387,29 +442,34 @@
             line-height: 1.5;
         }
         
-        .risk-indicator {
-            display: inline-block;
-            padding: 0.25rem 0.75rem;
-            border-radius: 20px;
-            font-size: 0.75rem;
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1rem;
+        }
+        
+        .comparison-table th,
+        .comparison-table td {
+            padding: 0.75rem;
+            text-align: left;
+            border-bottom: 1px solid var(--cream-dark);
+            font-size: 0.85rem;
+        }
+        
+        .comparison-table th {
+            background: var(--cream);
             font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
+            color: var(--black);
         }
         
-        .risk-low {
-            background: #D1FAE5;
-            color: #065F46;
+        .comparison-table .better {
+            color: var(--accent-green);
+            font-weight: 600;
         }
         
-        .risk-medium {
-            background: #FEF3C7;
-            color: #92400E;
-        }
-        
-        .risk-high {
-            background: #FEE2E2;
-            color: #991B1B;
+        .comparison-table .worse {
+            color: var(--accent-red);
+            font-weight: 600;
         }
         
         @keyframes fadeIn {
@@ -449,6 +509,10 @@
                 grid-template-columns: 1fr;
             }
             
+            .mode-toggle {
+                flex-direction: column;
+            }
+            
             h1 {
                 font-size: 1.75rem;
             }
@@ -459,8 +523,13 @@
     <div class="container">
         <header>
             <h1>🐐 Group Loan Model Simulator</h1>
-            <p class="subtitle">Community-Based Breeding & Milk Production Model - Shared Assets, Multiple Income Streams</p>
+            <p class="subtitle">Complete Financial Breakdown: See How 300K Creates Value for Everyone</p>
         </header>
+        
+        <div class="mode-toggle">
+            <button class="mode-btn active" onclick="switchMode('standard')">📊 Standard Model (300K Float)</button>
+            <button class="mode-btn" onclick="switchMode('sandbox')">🎮 Sandbox Mode (Custom Rates)</button>
+        </div>
         
         <div class="model-comparison">
             <div class="comparison-badge individual-model">
@@ -469,7 +538,7 @@
                     Default Risk: <strong>10-15%</strong><br>
                     Monthly Burden: <strong>Kshs. 6,111</strong><br>
                     Income Streams: <strong>1 (Milk Only)</strong><br>
-                    Farmer Isolation: <strong>High</strong>
+                    ROI for Financier: <strong>25-30%</strong>
                 </div>
             </div>
             <div class="comparison-badge group-model">
@@ -477,316 +546,186 @@
                 <div class="badge-stats">
                     Default Risk: <strong>2-5%</strong><br>
                     Monthly Burden: <strong>Kshs. 1,200/person</strong><br>
-                    Income Streams: <strong>4 (Milk, Breeding, Manure, Kids)</strong><br>
-                    Community Support: <strong>High</strong>
+                    Income Streams: <strong>4 (Diversified)</strong><br>
+                    ROI for Financier: <strong id="headerROI">35-42%</strong>
                 </div>
             </div>
         </div>
         
         <div class="dashboard">
-            <!-- Panel 1: Float Allocation -->
-            <div class="panel">
+            <!-- Panel 1: Float Breakdown - Step by Step -->
+            <div class="panel full-width">
                 <div class="panel-header">
                     <span class="panel-icon">💰</span>
-                    Float Allocation
+                    Step-by-Step: How the 300K Float is Allocated
                 </div>
                 
-                <div class="control-group">
-                    <div class="control-label">
-                        <span>Total Float (Kshs.)</span>
-                        <span class="control-value">Kshs. <span id="totalFloatValue">300,000</span></span>
+                <div class="flow-step" style="border-left-color: var(--accent-purple);">
+                    <div class="flow-step-number">1</div>
+                    <div class="flow-header">
+                        <span class="flow-name">🐐 Breeding Buck Purchase</span>
+                        <span class="flow-amount" id="buckPurchase">Kshs. 150,000</span>
                     </div>
-                    <input type="number" min="200000" max="500000" step="10000" value="300000" class="slider" id="totalFloat" placeholder="Enter amount">
-                </div>
-                
-                <div class="control-group">
-                    <div class="control-label">
-                        <span>Breeding Bucks Allocation (%)</span>
-                        <span class="control-value"><span id="bucksAllocationValue">50</span>%</span>
-                    </div>
-                    <input type="number" min="30" max="70" step="5" value="50" class="slider" id="bucksAllocation" placeholder="Enter percentage">
-                </div>
-                
-                <div class="metrics-grid">
-                    <div class="metric-card">
-                        <div class="metric-label">For Breeding Bucks</div>
-                        <div class="metric-value" id="bucksAmount">150,000</div>
-                        <div class="metric-subtext">Community asset</div>
-                    </div>
-                    <div class="metric-card">
-                        <div class="metric-label">For Operations</div>
-                        <div class="metric-value" id="operationsAmount">150,000</div>
-                        <div class="metric-subtext">Feed, training, infrastructure</div>
+                    <div class="flow-details">
+                        High-quality breeding buck(s) - becomes group asset that generates breeding income
                     </div>
                 </div>
                 
-                <div class="help-text">
-                    <strong>💡 Float Strategy:</strong> Breeding bucks become group assets that generate income through breeding services. Operations budget covers feed (improves milk), training, collection center, and chilling equipment.
+                <div class="flow-step" style="border-left-color: var(--accent-blue);">
+                    <div class="flow-step-number">2</div>
+                    <div class="flow-header">
+                        <span class="flow-name">🛡️ Insurance, Logistics & Shed</span>
+                        <span class="flow-amount" id="buckInsurance">Kshs. 50,000</span>
+                    </div>
+                    <div class="flow-details">
+                        <span id="insuranceDetails">Insurance (20K) + Logistics (10K) + Shed (20K)</span>
+                    </div>
+                </div>
+                
+                <div class="flow-step" style="border-left-color: var(--accent-green);">
+                    <div class="flow-step-number">3</div>
+                    <div class="flow-header">
+                        <span class="flow-name">📦 Remaining for Operations</span>
+                        <span class="flow-amount" id="operationsTotal">Kshs. 100,000</span>
+                    </div>
+                    <div class="flow-details">
+                        Allocated across: Feed, Training, Vet Services, and Agribusiness Education to boost milk production
+                    </div>
+                </div>
+                
+                <div style="margin-top: 1.5rem; padding-top: 1.5rem; border-top: 2px solid var(--cream-dark);">
+                    <h3 style="font-family: 'Space Grotesk'; font-size: 1rem; font-weight: 600; margin-bottom: 1rem; color: var(--slate-dark);">
+                        Operations Budget Breakdown (Kshs. <span id="opsBreakdownTotal">100,000</span>):
+                    </h3>
+                    
+                    <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem;">
+                        <div class="metric-card" style="border-left-color: var(--accent-green);">
+                            <div class="metric-label">🌾 Feed & Concentrate</div>
+                            <div class="metric-value" style="font-size: 1.2rem;" id="feedAllocation">40,000</div>
+                            <div class="metric-subtext">40% - Boosts milk 3x</div>
+                        </div>
+                        
+                        <div class="metric-card" style="border-left-color: var(--accent-blue);">
+                            <div class="metric-label">🎓 Training Programs</div>
+                            <div class="metric-value" style="font-size: 1.2rem;" id="trainingAllocation">25,000</div>
+                            <div class="metric-subtext">25% - Billys + Imfuyo</div>
+                        </div>
+                        
+                        <div class="metric-card" style="border-left-color: var(--accent-purple);">
+                            <div class="metric-label">💉 Vet Services</div>
+                            <div class="metric-value" style="font-size: 1.2rem;" id="vetAllocation">20,000</div>
+                            <div class="metric-subtext">20% - Health monitoring</div>
+                        </div>
+                        
+                        <div class="metric-card" style="border-left-color: var(--accent-pink);">
+                            <div class="metric-label">📚 Agribusiness Education</div>
+                            <div class="metric-value" style="font-size: 1.2rem;" id="educationAllocation">15,000</div>
+                            <div class="metric-subtext">15% - Business skills</div>
+                        </div>
+                    </div>
+                    
+                    <div class="metric-card" style="border-left-color: var(--black); background: linear-gradient(135deg, #FEF3C7 0%, #FDE68A 100%); margin-top: 1rem;">
+                        <div class="metric-label">✅ Total Operations Allocated</div>
+                        <div class="metric-value" style="font-size: 1.2rem; color: var(--accent-yellow);" id="totalAllocated">100,000</div>
+                        <div class="metric-subtext">100% utilized for productivity</div>
+                    </div>
+                </div>
+                
+                <div class="highlight-box" style="background: linear-gradient(135deg, #D1FAE5 0%, #A7F3D0 100%); border-left-color: var(--accent-green); margin-top: 1.5rem;">
+                    <div class="highlight-title" style="color: #065F46;">💡 Smart Allocation Strategy</div>
+                    <div class="highlight-text" style="color: #065F46;">
+                        Every shilling is strategically invested: <strong>150K for the breeding buck</strong> (asset that generates ongoing income), <strong>50K for insurance, logistics & shed</strong> (protecting and housing the asset), and <strong>100K for operations</strong> (feed regiment, training, vet services, and business education) to maximize milk production from 0.5L to 1.5L per goat. This creates a self-sustaining ecosystem where farmers thrive and easily repay the loan.
+                    </div>
                 </div>
             </div>
             
-            <!-- Panel 2: Group Setup -->
-            <div class="panel">
+            <!-- Sandbox Controls Panel (Hidden by default) -->
+            <div class="panel full-width" id="sandboxControls" style="display: none;">
                 <div class="panel-header">
-                    <span class="panel-icon">👥</span>
-                    Group Configuration
+                    <span class="panel-icon">🎮</span>
+                    Sandbox Controls - Customize Your Model
                 </div>
                 
-                <div class="control-group">
-                    <div class="control-label">
-                        <span>Group Members</span>
-                        <span class="control-value"><span id="groupMembersValue">20</span> farmers</span>
+                <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem;">
+                    <div class="control-group">
+                        <div class="control-label">
+                            <span>Total Float (Kshs.)</span>
+                            <span class="control-value">Kshs. <span id="totalFloatValue">300,000</span></span>
+                        </div>
+                        <input type="number" min="200000" max="500000" step="10000" value="300000" class="input-field" id="totalFloat">
                     </div>
-                    <input type="number" min="10" max="50" step="1" value="20" class="slider" id="groupMembers" placeholder="Number of farmers">
-                </div>
-                
-                <div class="control-group">
-                    <div class="control-label">
-                        <span>Avg Goats per Farmer</span>
-                        <span class="control-value"><span id="goatsPerFarmerValue">3</span> goats</span>
+                    
+                    <div class="control-group">
+                        <div class="control-label">
+                            <span>Group Members</span>
+                            <span class="control-value"><span id="groupMembersValue">20</span> farmers</span>
+                        </div>
+                        <input type="number" min="10" max="50" step="1" value="20" class="input-field" id="groupMembers">
                     </div>
-                    <input type="number" min="2" max="6" step="1" value="3" class="slider" id="goatsPerFarmer" placeholder="Goats per farmer">
-                </div>
-                
-                <div class="control-group">
-                    <div class="control-label">
-                        <span>Number of Breeding Bucks</span>
-                        <span class="control-value"><span id="numBucksValue">1</span> buck(s)</span>
+                    
+                    <div class="control-group">
+                        <div class="control-label">
+                            <span>Goats per Farmer</span>
+                            <span class="control-value"><span id="goatsPerFarmerValue">3</span> goats</span>
+                        </div>
+                        <input type="number" min="2" max="6" step="1" value="3" class="input-field" id="goatsPerFarmer">
                     </div>
-                    <input type="number" min="1" max="2" step="1" value="1" class="slider" id="numBucks" placeholder="Number of bucks">
-                </div>
-                
-                <div class="metrics-grid">
-                    <div class="metric-card">
-                        <div class="metric-label">Total Group Goats</div>
-                        <div class="metric-value" id="totalGoats">60</div>
-                        <div class="metric-subtext">Productive does</div>
+                    
+                    <div class="control-group">
+                        <div class="control-label">
+                            <span>Interest Rate (%/month)</span>
+                            <span class="control-value"><span id="interestRateValue">3.0</span>%</span>
+                        </div>
+                        <input type="number" min="2" max="5" step="0.5" value="3" class="input-field" id="interestRate">
                     </div>
-                    <div class="metric-card">
-                        <div class="metric-label">Buck Cost Each</div>
-                        <div class="metric-value">100,000</div>
-                        <div class="metric-subtext">High-quality breeding buck</div>
+                    
+                    <div class="control-group">
+                        <div class="control-label">
+                            <span>Milk Price (Kshs/L)</span>
+                            <span class="control-value">Kshs. <span id="milkPriceValue">70</span></span>
+                        </div>
+                        <input type="number" min="50" max="100" step="5" value="70" class="input-field" id="milkPrice">
                     </div>
-                </div>
-                
-                <div class="metrics-grid" style="margin-top: 1rem;">
-                    <div class="metric-card">
-                        <div class="metric-label">Total Buck Investment</div>
-                        <div class="metric-value" id="totalBuckCost">100,000</div>
-                        <div class="metric-subtext">Group breeding assets</div>
+                    
+                    <div class="control-group">
+                        <div class="control-label">
+                            <span>Target Milk (L/goat/day)</span>
+                            <span class="control-value"><span id="targetMilkValue">1.5</span> L</span>
+                        </div>
+                        <input type="number" min="1" max="3" step="0.1" value="1.5" class="input-field" id="targetMilk">
                     </div>
-                    <div class="metric-card">
-                        <div class="metric-label">Remaining for Operations</div>
-                        <div class="metric-value" id="remainingFloat">200,000</div>
-                        <div class="metric-subtext">Feed, training, infrastructure</div>
+                    
+                    <div class="control-group">
+                        <div class="control-label">
+                            <span>Breeding Fee (Kshs)</span>
+                            <span class="control-value">Kshs. <span id="breedingFeeValue">400</span></span>
+                        </div>
+                        <input type="number" min="200" max="600" step="50" value="400" class="input-field" id="breedingFee">
+                    </div>
+                    
+                    <div class="control-group">
+                        <div class="control-label">
+                            <span>Imfuyo Fee (%)</span>
+                            <span class="control-value"><span id="imfuyoFeeValue">10</span>%</span>
+                        </div>
+                        <input type="number" min="5" max="15" step="1" value="10" class="input-field" id="imfuyoFee">
+                    </div>
+                    
+                    <div class="control-group">
+                        <div class="control-label">
+                            <span>Number of Bucks</span>
+                            <span class="control-value"><span id="numBucksValue">1</span> buck(s)</span>
+                        </div>
+                        <input type="number" min="1" max="3" step="1" value="1" class="input-field" id="numBucks">
                     </div>
                 </div>
             </div>
             
-            <!-- Panel 3: Operations Budget Breakdown -->
-            <div class="panel">
-                <div class="panel-header">
-                    <span class="panel-icon">📦</span>
-                    Operations Float Allocation
-                </div>
-                
-                <div class="income-stream" style="border-left-color: var(--accent-blue);">
-                    <div class="income-header">
-                        <span class="income-name">🌾 Feed & Concentrate</span>
-                        <span class="income-amount" id="feedBudget">Kshs. 80,000</span>
-                    </div>
-                    <div class="income-details">
-                        <span id="feedDetails">Improved feed to boost milk from 0.5L to 1.5L per goat</span>
-                    </div>
-                </div>
-                
-                <div class="income-stream" style="border-left-color: var(--accent-blue);">
-                    <div class="income-header">
-                        <span class="income-name">🎓 Training Programs</span>
-                        <span class="income-amount" id="trainingBudget">Kshs. 30,000</span>
-                    </div>
-                    <div class="income-details">
-                        <span>Billys milk quality training + Imfuyo farming best practices</span>
-                    </div>
-                </div>
-                
-                <div class="income-stream" style="border-left-color: var(--accent-blue);">
-                    <div class="income-header">
-                        <span class="income-name">🏗️ Collection Center</span>
-                        <span class="income-amount" id="centerBudget">Kshs. 50,000</span>
-                    </div>
-                    <div class="income-details">
-                        <span>Chilling equipment, collection buckets, milk testing kits</span>
-                    </div>
-                </div>
-                
-                <div class="income-stream" style="border-left-color: var(--accent-blue);">
-                    <div class="income-header">
-                        <span class="income-name">💉 Veterinary & Tags</span>
-                        <span class="income-amount" id="vetBudget">Kshs. 20,000</span>
-                    </div>
-                    <div class="income-details">
-                        <span>Imfuyo services: vaccinations, tagging, health monitoring</span>
-                    </div>
-                </div>
-                
-                <div class="income-stream" style="border-left-color: var(--accent-blue);">
-                    <div class="income-header">
-                        <span class="income-name">🏠 Shelter Improvements</span>
-                        <span class="income-amount" id="shelterBudget">Kshs. 20,000</span>
-                    </div>
-                    <div class="income-details">
-                        <span>Group shelter materials, fencing, water systems</span>
-                    </div>
-                </div>
-                
-                <div class="metrics-grid" style="margin-top: 1rem;">
-                    <div class="metric-card" style="grid-column: 1 / -1; border-left-color: var(--accent-blue);">
-                        <div class="metric-label">Total Operations Budget</div>
-                        <div class="metric-value" id="totalOperations">200,000</div>
-                        <div class="metric-subtext">Complete infrastructure & support</div>
-                    </div>
-                </div>
-                
-                <div class="help-text">
-                    <strong>💡 Smart Allocation:</strong> With only 100-200K on bucks (1-2 high-quality), the remaining 100-200K builds complete support infrastructure. This ensures farmers have everything needed to maximize productivity and income.
-                </div>
-            </div>
-            
-            <!-- Panel 3.5: Individual Farmer Breakdown -->
-            <div class="panel">
-                <div class="panel-header">
-                    <span class="panel-icon">👤</span>
-                    Individual Farmer Income
-                </div>
-                
-                <div class="help-text" style="background: #D1FAE5; color: #065F46; margin-top: 0; margin-bottom: 1rem;">
-                    <strong>💚 Why Defaults Are Minimal:</strong> Each farmer earns far more than they pay. Group support ensures accountability.
-                </div>
-                
-                <div class="metric-card" style="background: linear-gradient(135deg, #FEF3C7 0%, #FDE68A 100%); margin-bottom: 1rem;">
-                    <div class="metric-label" style="color: #78350F;">Monthly Payment per Farmer</div>
-                    <div class="metric-value" style="font-size: 2rem; color: #78350F;" id="individualPayment">1,200</div>
-                    <div class="metric-subtext" style="color: #92400E;">Their share of group loan</div>
-                </div>
-                
-                <div style="font-size: 0.85rem; font-weight: 600; margin-bottom: 0.5rem; color: var(--slate-dark);">Personal Monthly Income:</div>
-                
-                <div style="background: var(--cream); padding: 0.75rem; border-radius: 8px; margin-bottom: 0.5rem; border-left: 3px solid var(--accent-green);">
-                    <div style="display: flex; justify-content: space-between; margin-bottom: 0.25rem;">
-                        <span style="font-size: 0.85rem; color: var(--slate-dark);">🥛 Personal Milk Sales</span>
-                        <strong style="color: var(--accent-green); font-family: 'Space Grotesk'; font-size: 0.95rem;" id="indivMilkIncome">6,300</strong>
-                    </div>
-                    <div style="font-size: 0.75rem; color: var(--slate); line-height: 1.3;">
-                        <span id="indivMilkCalc">3 goats × 1.5L/day × 70 Kshs × 30 days</span>
-                    </div>
-                </div>
-                
-                <div style="background: var(--cream); padding: 0.75rem; border-radius: 8px; margin-bottom: 0.5rem; border-left: 3px solid var(--accent-green);">
-                    <div style="display: flex; justify-content: space-between; margin-bottom: 0.25rem;">
-                        <span style="font-size: 0.85rem; color: var(--slate-dark);">🐐 Breeding Income Share</span>
-                        <strong style="color: var(--accent-green); font-family: 'Space Grotesk'; font-size: 0.95rem;" id="indivBreedingIncome">400</strong>
-                    </div>
-                    <div style="font-size: 0.75rem; color: var(--slate); line-height: 1.3;">
-                        Equal share of group breeding revenue
-                    </div>
-                </div>
-                
-                <div style="background: var(--cream); padding: 0.75rem; border-radius: 8px; margin-bottom: 0.5rem; border-left: 3px solid var(--accent-green);">
-                    <div style="display: flex; justify-content: space-between; margin-bottom: 0.25rem;">
-                        <span style="font-size: 0.85rem; color: var(--slate-dark);">🌱 Personal Manure Sales</span>
-                        <strong style="color: var(--accent-green); font-family: 'Space Grotesk'; font-size: 0.95rem;">300</strong>
-                    </div>
-                    <div style="font-size: 0.75rem; color: var(--slate); line-height: 1.3;">
-                        10 Kshs/day × 30 days = organic fertilizer
-                    </div>
-                </div>
-                
-                <div style="background: var(--cream); padding: 0.75rem; border-radius: 8px; margin-bottom: 1rem; border-left: 3px solid var(--accent-green);">
-                    <div style="display: flex; justify-content: space-between; margin-bottom: 0.25rem;">
-                        <span style="font-size: 0.85rem; color: var(--slate-dark);">👶 Kid Sales Share</span>
-                        <strong style="color: var(--accent-green); font-family: 'Space Grotesk'; font-size: 0.95rem;" id="indivKidIncome">800</strong>
-                    </div>
-                    <div style="font-size: 0.75rem; color: var(--slate); line-height: 1.3;">
-                        Their goats' kids + group share
-                    </div>
-                </div>
-                
-                <div class="metrics-grid">
-                    <div class="metric-card" style="border-color: var(--accent-green);">
-                        <div class="metric-label">Total Monthly Income</div>
-                        <div class="metric-value" style="color: var(--accent-green);" id="individualTotalIncome">7,800</div>
-                        <div class="metric-subtext">Before loan payment</div>
-                    </div>
-                    <div class="metric-card" style="border-color: var(--accent-blue);">
-                        <div class="metric-label">Net Take-Home</div>
-                        <div class="metric-value" style="color: var(--accent-blue);" id="individualNetIncome">6,600</div>
-                        <div class="metric-subtext">After paying Kshs. <span id="paymentInNet">1,200</span></div>
-                    </div>
-                </div>
-                
-                <div class="highlight-box" style="margin-top: 1rem;">
-                    <div class="highlight-title">📊 Why This Prevents Defaults:</div>
-                    <div class="highlight-text">
-                        Payment is only <strong id="paymentBurden" style="font-size: 1.1rem; color: #4F46E5;">15%</strong> of income. Farmer keeps <strong id="keepPercentage" style="font-size: 1.1rem; color: #10B981;">85%</strong> (Kshs. <span id="keepAmount">6,600</span>). This is <strong style="color: #10B981;">extremely sustainable</strong> — industry safe zone is under 30%. Plus group peer pressure adds social collateral!
-                    </div>
-                </div>
-            </div>
-            
-            <!-- Panel 4: Milk Production Evolution -->
-            <div class="panel">
-                <div class="panel-header">
-                    <span class="panel-icon">🥛</span>
-                    Milk Production Evolution
-                </div>
-                
-                <div class="control-group">
-                    <div class="control-label">
-                        <span>Current Milk (L/goat/day)</span>
-                        <span class="control-value"><span id="currentMilkValue">0.5</span> L</span>
-                    </div>
-                    <input type="number" min="0.3" max="1" step="0.1" value="0.5" class="slider" id="currentMilk" placeholder="Liters per goat">
-                </div>
-                
-                <div class="control-group">
-                    <div class="control-label">
-                        <span>Target Milk (L/goat/day)</span>
-                        <span class="control-value"><span id="targetMilkValue">1.5</span> L</span>
-                    </div>
-                    <input type="number" min="1" max="3" step="0.1" value="1.5" class="slider" id="targetMilk" placeholder="Target liters">
-                </div>
-                
-                <div class="control-group">
-                    <div class="control-label">
-                        <span>Months to Target</span>
-                        <span class="control-value"><span id="monthsToTargetValue">2</span> months</span>
-                    </div>
-                    <input type="number" min="1" max="6" step="1" value="2" class="slider" id="monthsToTarget" placeholder="Months">
-                </div>
-                
-                <div class="metrics-grid">
-                    <div class="metric-card">
-                        <div class="metric-label">Current Daily (Group)</div>
-                        <div class="metric-value" id="currentDailyMilk">30</div>
-                        <div class="metric-subtext">Liters/day</div>
-                    </div>
-                    <div class="metric-card">
-                        <div class="metric-label">Target Daily (Group)</div>
-                        <div class="metric-value" id="targetDailyMilk">90</div>
-                        <div class="metric-subtext">Liters/day (3x growth!)</div>
-                    </div>
-                </div>
-                
-                <div class="chart-container">
-                    <canvas id="milkGrowthChart"></canvas>
-                </div>
-            </div>
-            
-            <!-- Panel 5: Income Streams -->
+            <!-- Panel 2: Income Streams -->
             <div class="panel two-thirds">
                 <div class="panel-header">
                     <span class="panel-icon">💵</span>
-                    Multiple Income Streams (Monthly)
+                    Group Income Streams (Monthly at Full Productivity)
                 </div>
                 
                 <div class="income-stream">
@@ -795,17 +734,17 @@
                         <span class="income-amount" id="milkIncome">Kshs. 126,000</span>
                     </div>
                     <div class="income-details">
-                        <span id="milkDetails">60 goats × 1.5 L/day × 70 Kshs/L × 30 days = Primary revenue stream</span>
+                        <span id="milkDetails">60 goats × 1.5 L/day × 70 Kshs/L × 30 days = Primary revenue</span>
                     </div>
                 </div>
                 
                 <div class="income-stream">
                     <div class="income-header">
-                        <span class="income-name">🐐 Breeding Services (External Farmers)</span>
-                        <span class="income-amount" id="breedingIncome">Kshs. 24,000</span>
+                        <span class="income-name">🐐 Breeding Services</span>
+                        <span class="income-amount" id="breedingIncome">Kshs. 8,000</span>
                     </div>
                     <div class="income-details">
-                        <span id="breedingDetails">3 bucks × 20 external farmers × 400 Kshs/service = Buck asset monetization</span>
+                        <span id="breedingDetails">1 buck × 20 external farmers × 400 Kshs/service</span>
                     </div>
                 </div>
                 
@@ -815,67 +754,391 @@
                         <span class="income-amount" id="manureIncome">Kshs. 6,000</span>
                     </div>
                     <div class="income-details">
-                        <span id="manureDetails">20 farmers × 10 Kshs/day × 30 days = Organic fertilizer revenue</span>
+                        <span id="manureDetails">20 farmers × 10 Kshs/day × 30 days</span>
                     </div>
                 </div>
                 
                 <div class="income-stream">
                     <div class="income-header">
-                        <span class="income-name">👶 Kid Sales (Quarterly)</span>
+                        <span class="income-name">👶 Kid Sales (Monthly avg)</span>
                         <span class="income-amount" id="kidIncome">Kshs. 16,000</span>
                     </div>
                     <div class="income-details">
-                        <span id="kidDetails">60 goats × 30% breeding rate × 4,000 Kshs/kid ÷ 3 months = Improved genetics</span>
+                        <span id="kidDetails">60 goats × 30% rate × 4,000 Kshs ÷ 3 months</span>
                     </div>
                 </div>
                 
                 <div class="metrics-grid" style="margin-top: 1rem;">
-                    <div class="metric-card" style="grid-column: 1 / -1;">
+                    <div class="metric-card" style="grid-column: 1 / -1; border-left-color: var(--accent-green);">
                         <div class="metric-label">Total Monthly Group Income</div>
-                        <div class="metric-value" style="font-size: 2rem; color: var(--accent-green);" id="totalMonthlyIncome">172,000</div>
-                        <div class="metric-subtext">Diversified revenue = lower risk</div>
-                    </div>
-                    <div class="metric-card">
-                        <div class="metric-label">Group Loan Payment</div>
-                        <div class="metric-value" id="groupLoanPayment">24,000</div>
-                        <div class="metric-subtext">14% of income</div>
-                    </div>
-                    <div class="metric-card">
-                        <div class="metric-label">Per Farmer Payment</div>
-                        <div class="metric-value" id="perFarmerPayment">1,200</div>
-                        <div class="metric-subtext">vs. 6,111 individual</div>
-                    </div>
-                </div>
-                
-                <div class="highlight-box">
-                    <div class="highlight-title">🎯 Why This Works Better:</div>
-                    <div class="highlight-text">
-                        Group model spreads risk across 20 farmers and 4 income streams. Each farmer pays <strong>only Kshs. 1,200/month</strong> instead of 6,111. Community support reduces defaults from 10% to <strong>2-5%</strong>. Shared bucks generate breeding income. Better feed = 3x milk production = everyone wins!
+                        <div class="metric-value" style="font-size: 2rem; color: var(--accent-green);" id="totalMonthlyIncome">156,000</div>
+                        <div class="metric-subtext">4 diversified revenue streams</div>
                     </div>
                 </div>
             </div>
             
-            <!-- Panel 6: Timeline -->
+            <!-- Panel 3: Group Metrics -->
             <div class="panel">
                 <div class="panel-header">
-                    <span class="panel-icon">📅</span>
-                    Growth Timeline
+                    <span class="panel-icon">👥</span>
+                    Group Configuration
                 </div>
                 
-                <div class="timeline" id="growthTimeline">
-                    <!-- Populated by JavaScript -->
+                <div class="metrics-grid">
+                    <div class="metric-card">
+                        <div class="metric-label">Total Farmers</div>
+                        <div class="metric-value" id="displayGroupMembers">20</div>
+                        <div class="metric-subtext">Community support</div>
+                    </div>
+                    
+                    <div class="metric-card">
+                        <div class="metric-label">Total Goats</div>
+                        <div class="metric-value" id="totalGoats">60</div>
+                        <div class="metric-subtext">Productive does</div>
+                    </div>
+                    
+                    <div class="metric-card">
+                        <div class="metric-label">Breeding Bucks</div>
+                        <div class="metric-value" id="displayNumBucks">1</div>
+                        <div class="metric-subtext">Group assets</div>
+                    </div>
+                    
+                    <div class="metric-card">
+                        <div class="metric-label">Target Milk/Goat</div>
+                        <div class="metric-value" id="displayTargetMilk">1.5L</div>
+                        <div class="metric-subtext">After feed program</div>
+                    </div>
+                </div>
+                
+                <div class="chart-container">
+                    <canvas id="milkGrowthChart"></canvas>
                 </div>
             </div>
             
-            <!-- Panel 7: Financial Projection -->
+            <!-- Panel 4: The Three Winners - ROI Breakdown -->
+            <div class="panel full-width">
+                <div class="panel-header">
+                    <span class="panel-icon">🏆</span>
+                    The Three Winners: Who Makes What & ROI Analysis
+                </div>
+                
+                <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem;">
+                    <!-- Financier -->
+                    <div class="stakeholder-card financier">
+                        <div class="stakeholder-title">
+                            🏦 Financier (Lender)
+                            <span class="roi-badge" style="color: var(--accent-yellow);" id="financierROI">ROI: 38%</span>
+                        </div>
+                        
+                        <div style="margin-bottom: 0.75rem;">
+                            <div style="font-size: 0.8rem; color: #78350F; margin-bottom: 0.25rem;">Initial Investment:</div>
+                            <div style="font-family: 'Space Grotesk'; font-size: 1.5rem; font-weight: 700; color: #78350F;">
+                                Kshs. <span id="financierInvestment">300,000</span>
+                            </div>
+                        </div>
+                        
+                        <div style="margin-bottom: 0.75rem;">
+                            <div style="font-size: 0.8rem; color: #78350F; margin-bottom: 0.25rem;">Total Repayment (12 months):</div>
+                            <div style="font-family: 'Space Grotesk'; font-size: 1.3rem; font-weight: 700; color: #065F46;">
+                                Kshs. <span id="financierRepayment">408,000</span>
+                            </div>
+                        </div>
+                        
+                        <div style="margin-bottom: 0.75rem;">
+                            <div style="font-size: 0.8rem; color: #78350F; margin-bottom: 0.25rem;">Net Profit:</div>
+                            <div style="font-family: 'Space Grotesk'; font-size: 1.8rem; font-weight: 700; color: var(--accent-green);">
+                                Kshs. <span id="financierProfit">108,000</span>
+                            </div>
+                        </div>
+                        
+                        <div style="font-size: 0.75rem; line-height: 1.4; color: #78350F;">
+                            <strong>Monthly Payment:</strong> Kshs. <span id="financierMonthly">34,000</span><br>
+                            <strong>Interest Rate:</strong> <span id="financierRate">3%/month</span><br>
+                            <strong>Risk Level:</strong> <span style="color: var(--accent-green); font-weight: 600;">LOW (2-5% default)</span>
+                        </div>
+                    </div>
+                    
+                    <!-- Imfuyo -->
+                    <div class="stakeholder-card imfuyo">
+                        <div class="stakeholder-title">
+                            🎯 Imfuyo (Facilitator)
+                            <span class="roi-badge" style="color: var(--accent-purple);" id="imfuyoROI">Fee: 10%</span>
+                        </div>
+                        
+                        <div style="margin-bottom: 0.75rem;">
+                            <div style="font-size: 0.8rem; color: #4C1D95; margin-bottom: 0.25rem;">Service Fee on Repayment:</div>
+                            <div style="font-family: 'Space Grotesk'; font-size: 1.5rem; font-weight: 700; color: #4C1D95;">
+                                <span id="imfuyoFeePercent">10</span>% of total
+                            </div>
+                        </div>
+                        
+                        <div style="margin-bottom: 0.75rem;">
+                            <div style="font-size: 0.8rem; color: #4C1D95; margin-bottom: 0.25rem;">Total Earnings (12 months):</div>
+                            <div style="font-family: 'Space Grotesk'; font-size: 1.8rem; font-weight: 700; color: var(--accent-green);">
+                                Kshs. <span id="imfuyoEarnings">40,800</span>
+                            </div>
+                        </div>
+                        
+                        <div style="margin-bottom: 0.75rem;">
+                            <div style="font-size: 0.8rem; color: #4C1D95; margin-bottom: 0.25rem;">Per Month Average:</div>
+                            <div style="font-family: 'Space Grotesk'; font-size: 1.3rem; font-weight: 700; color: #4C1D95;">
+                                Kshs. <span id="imfuyoMonthly">3,400</span>
+                            </div>
+                        </div>
+                        
+                        <div style="font-size: 0.75rem; line-height: 1.4; color: #4C1D95;">
+                            <strong>Services Provided:</strong><br>
+                            • Farmer training & monitoring<br>
+                            • Imfuyo platform tracking<br>
+                            • Group coordination<br>
+                            • Quality assurance
+                        </div>
+                    </div>
+                    
+                    <!-- Farmers -->
+                    <div class="stakeholder-card farmers">
+                        <div class="stakeholder-title">
+                            👨‍🌾 Farmers (20 Members)
+                            <span class="roi-badge" style="color: var(--accent-green);">Net: +450%</span>
+                        </div>
+                        
+                        <div style="margin-bottom: 0.75rem;">
+                            <div style="font-size: 0.8rem; color: #065F46; margin-bottom: 0.25rem;">Monthly Income per Farmer:</div>
+                            <div style="font-family: 'Space Grotesk'; font-size: 1.5rem; font-weight: 700; color: #065F46;">
+                                Kshs. <span id="farmerMonthlyIncome">7,800</span>
+                            </div>
+                        </div>
+                        
+                        <div style="margin-bottom: 0.75rem;">
+                            <div style="font-size: 0.8rem; color: #065F46; margin-bottom: 0.25rem;">Monthly Payment per Farmer:</div>
+                            <div style="font-family: 'Space Grotesk'; font-size: 1.2rem; font-weight: 700; color: #DC2626;">
+                                - Kshs. <span id="farmerMonthlyPayment">1,700</span>
+                            </div>
+                        </div>
+                        
+                        <div style="margin-bottom: 0.75rem;">
+                            <div style="font-size: 0.8rem; color: #065F46; margin-bottom: 0.25rem;">Net Monthly Take-Home:</div>
+                            <div style="font-family: 'Space Grotesk'; font-size: 1.8rem; font-weight: 700; color: var(--accent-green);">
+                                Kshs. <span id="farmerNetIncome">6,100</span>
+                            </div>
+                        </div>
+                        
+                        <div style="font-size: 0.75rem; line-height: 1.4; color: #065F46;">
+                            <strong>Total Group Net (20 farmers):</strong> Kshs. <span id="totalFarmersNet">122,000</span>/month<br>
+                            <strong>Payment Burden:</strong> <span id="paymentBurden">22%</span> of income<br>
+                            <strong>Keep:</strong> <span style="font-size: 1rem; font-weight: 700;" id="keepPercentage">78%</span> of earnings
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="highlight-box" style="margin-top: 1.5rem; background: linear-gradient(135deg, #FEF3C7 0%, #FDE68A 100%); border-left-color: var(--accent-yellow);">
+                    <div class="highlight-title" style="color: #78350F;">🎯 Why Everyone Wins</div>
+                    <div class="highlight-text" style="color: #78350F;">
+                        <strong>Financier:</strong> Gets <span id="summaryFinancierROI">38%</span> ROI (vs 25-30% individual model) with lower risk<br>
+                        <strong>Imfuyo:</strong> Earns Kshs. <span id="summaryImfuyoTotal">40,800</span> over 12 months for facilitation services<br>
+                        <strong>Farmers:</strong> Each keeps Kshs. <span id="summaryFarmerNet">6,100</span>/month after paying only Kshs. <span id="summaryFarmerPayment">1,700</span> (vs 6,111 individual)<br>
+                        <br>
+                        <strong>Total value created:</strong> Kshs. <span id="totalValueCreated">1,872,000</span> in group income over 12 months!
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Panel 5: 12-Month Financial Projection -->
             <div class="panel full-width">
                 <div class="panel-header">
                     <span class="panel-icon">📊</span>
-                    12-Month Financial Projection & Comparison
+                    12-Month Financial Projection & Cash Flow
                 </div>
                 
                 <div class="chart-container" style="height: 300px;">
                     <canvas id="projectionChart"></canvas>
+                </div>
+                
+                <div class="metrics-grid" style="grid-template-columns: repeat(4, 1fr); margin-top: 1.5rem;">
+                    <div class="metric-card" style="border-left-color: var(--accent-green);">
+                        <div class="metric-label">Total Group Income (12mo)</div>
+                        <div class="metric-value" style="font-size: 1.2rem;" id="total12MonthIncome">1,872,000</div>
+                        <div class="metric-subtext">All revenue streams</div>
+                    </div>
+                    
+                    <div class="metric-card" style="border-left-color: var(--accent-red);">
+                        <div class="metric-label">Total Repayment (12mo)</div>
+                        <div class="metric-value" style="font-size: 1.2rem;" id="total12MonthRepay">408,000</div>
+                        <div class="metric-subtext">Principal + interest</div>
+                    </div>
+                    
+                    <div class="metric-card" style="border-left-color: var(--accent-blue);">
+                        <div class="metric-label">Group Net Profit (12mo)</div>
+                        <div class="metric-value" style="font-size: 1.2rem;" id="total12MonthProfit">1,464,000</div>
+                        <div class="metric-subtext">After loan payment</div>
+                    </div>
+                    
+                    <div class="metric-card" style="border-left-color: var(--accent-purple);">
+                        <div class="metric-label">Average Monthly Surplus</div>
+                        <div class="metric-value" style="font-size: 1.2rem;" id="avgMonthlySurplus">122,000</div>
+                        <div class="metric-subtext">Distributed to farmers</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Panel 5.5: Beyond the First 12 Months - The Real ROI Growth -->
+            <div class="panel full-width">
+                <div class="panel-header">
+                    <span class="panel-icon">🚀</span>
+                    Beyond Month 12: This is Just the Beginning - The Real ROI Growth
+                </div>
+                
+                <div class="highlight-box" style="background: linear-gradient(135deg, #FEF3C7 0%, #FDE68A 100%); border-left-color: var(--accent-yellow); margin-top: 0;">
+                    <div class="highlight-title" style="color: #78350F;">🎯 The Pilot is the Foundation, Not the Ceiling</div>
+                    <div class="highlight-text" style="color: #78350F;">
+                        The <strong id="month12ROI">38%</strong> ROI in year one is just the <strong>pilot phase</strong>. Once the group completes their first loan cycle, they become a <strong>proven, creditworthy customer base</strong> with verified income, payment history, and production data. This unlocks exponential growth opportunities for the financier.
+                    </div>
+                </div>
+                
+                <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.5rem; margin-top: 1.5rem;">
+                    <!-- Column 1: Individual Product Expansion -->
+                    <div>
+                        <h3 style="font-family: 'Space Grotesk'; font-size: 1.1rem; font-weight: 700; margin-bottom: 1rem; color: var(--black);">
+                            📈 Individual Product Expansion
+                        </h3>
+                        
+                        <div class="flow-step" style="border-left-color: var(--accent-blue); margin-bottom: 1rem;">
+                            <div class="flow-step-number">1</div>
+                            <div class="flow-header">
+                                <span class="flow-name">🌾 Feed Inventory Loans</span>
+                                <span class="flow-amount">Kshs. 10-20K/farmer</span>
+                            </div>
+                            <div class="flow-details">
+                                Farmers now have proven income streams. Offer individual working capital loans for bulk feed purchases at better rates. <strong>ROI: 30-35%</strong> with near-zero default risk (you have their milk payment data).
+                            </div>
+                        </div>
+                        
+                        <div class="flow-step" style="border-left-color: var(--accent-purple); margin-bottom: 1rem;">
+                            <div class="flow-step-number">2</div>
+                            <div class="flow-header">
+                                <span class="flow-name">❄️ Chiller/Storage Equipment</span>
+                                <span class="flow-amount">Kshs. 30-50K/farmer</span>
+                            </div>
+                            <div class="flow-details">
+                                Help farmers store milk longer, reduce spoilage, negotiate better prices. Loan for personal chillers backed by their established revenue. <strong>ROI: 35-40%</strong> + reduces your offtake risk.
+                            </div>
+                        </div>
+                        
+                        <div class="flow-step" style="border-left-color: var(--accent-green); margin-bottom: 1rem;">
+                            <div class="flow-step-number">3</div>
+                            <div class="flow-header">
+                                <span class="flow-name">🐐 Herd Expansion Loans</span>
+                                <span class="flow-amount">Kshs. 40-80K/farmer</span>
+                            </div>
+                            <div class="flow-details">
+                                Farmers want to grow from 3 goats to 5-8 goats. You finance the additional livestock. More goats = more milk = more revenue for everyone. <strong>ROI: 32-38%</strong> with livestock as collateral.
+                            </div>
+                        </div>
+                        
+                        <div class="flow-step" style="border-left-color: var(--accent-pink); margin-bottom: 1rem;">
+                            <div class="flow-step-number">4</div>
+                            <div class="flow-header">
+                                <span class="flow-name">🏠 Infrastructure Upgrades</span>
+                                <span class="flow-amount">Kshs. 20-40K/farmer</span>
+                            </div>
+                            <div class="flow-details">
+                                Better shelters, water systems, fencing. Improves animal health and productivity. Backed by Imfuyo data showing their payment discipline. <strong>ROI: 28-33%</strong>.
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Column 2: Data-Driven Innovation -->
+                    <div>
+                        <h3 style="font-family: 'Space Grotesk'; font-size: 1.1rem; font-weight: 700; margin-bottom: 1rem; color: var(--black);">
+                            💡 Data-Driven Innovation & Scale
+                        </h3>
+                        
+                        <div class="income-stream" style="border-left-color: var(--accent-blue); margin-bottom: 1rem;">
+                            <div class="income-header">
+                                <span class="income-name">📊 Imfuyo Data Intelligence</span>
+                            </div>
+                            <div class="income-details">
+                                Every farmer tracked: milk output, payment history, feed conversion rates, breeding success. This data lets you create <strong>predictive risk models</strong>, personalize loan terms, and identify top performers for premium products. You're building a <strong>proprietary credit scoring system</strong> for smallholder farmers.
+                            </div>
+                        </div>
+                        
+                        <div class="income-stream" style="border-left-color: var(--accent-purple); margin-bottom: 1rem;">
+                            <div class="income-header">
+                                <span class="income-name">🔄 Repeat Group Cycles</span>
+                            </div>
+                            <div class="income-details">
+                                Same group takes a <strong>larger loan</strong> (400-500K) for year 2 with better terms. Lower risk, higher volume = better margins. Or replicate the model with <strong>10 new groups</strong> using learnings from the pilot. <strong>Scale to 200-500 farmers in year 2</strong>.
+                            </div>
+                        </div>
+                        
+                        <div class="income-stream" style="border-left-color: var(--accent-green); margin-bottom: 1rem;">
+                            <div class="income-header">
+                                <span class="income-name">🎯 Cross-Sell Financial Products</span>
+                            </div>
+                            <div class="income-details">
+                                Insurance products, savings accounts, school fee loans, emergency credit. You have 20 farmers with <strong>proven income</strong> who trust you. Cross-selling to this base = <strong>20-30% additional revenue per customer</strong> with minimal acquisition cost.
+                            </div>
+                        </div>
+                        
+                        <div class="income-stream" style="border-left-color: var(--accent-yellow); margin-bottom: 1rem;">
+                            <div class="income-header">
+                                <span class="income-name">🌍 Value Chain Integration</span>
+                            </div>
+                            <div class="income-details">
+                                Partner with Billys or other offtakers for <strong>supply chain financing</strong>. Finance their procurement directly. Or work backward: finance feed suppliers, vet services, equipment vendors. Every node in the value chain becomes a revenue opportunity. <strong>Ecosystem ROI: 40-50%+</strong>.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin-top: 1.5rem;">
+                    <div class="metric-card" style="border-left-color: var(--accent-green); background: linear-gradient(135deg, #D1FAE5 0%, #A7F3D0 100%);">
+                        <div class="metric-label">Year 2 Potential Revenue</div>
+                        <div class="metric-value" style="font-size: 1.3rem; color: #065F46;" id="year2Revenue">2.5M - 4M</div>
+                        <div class="metric-subtext">From same 20 farmers + new groups</div>
+                    </div>
+                    
+                    <div class="metric-card" style="border-left-color: var(--accent-blue); background: linear-gradient(135deg, #DBEAFE 0%, #BFDBFE 100%);">
+                        <div class="metric-label">3-Year Portfolio Value</div>
+                        <div class="metric-value" style="font-size: 1.3rem; color: #1E40AF;">8M - 15M</div>
+                        <div class="metric-subtext">With 100-200 farmer network</div>
+                    </div>
+                    
+                    <div class="metric-card" style="border-left-color: var(--accent-purple); background: linear-gradient(135deg, #EDE9FE 0%, #DDD6FE 100%);">
+                        <div class="metric-label">Data Asset Value</div>
+                        <div class="metric-value" style="font-size: 1.3rem; color: #6B21A8;">Priceless</div>
+                        <div class="metric-subtext">Proprietary farmer credit database</div>
+                    </div>
+                </div>
+                
+                <div class="highlight-box" style="margin-top: 1.5rem;">
+                    <div class="highlight-title">🚀 The Compounding Effect</div>
+                    <div class="highlight-text">
+                        <strong>Month 12:</strong> You've made <strong><span id="summaryYear1Profit">108,000</span> Kshs profit</strong> (38% ROI) and have 20 farmers with perfect payment history.<br><br>
+                        
+                        <strong>Year 2:</strong> Those same 20 farmers take individual loans totaling <strong>1.2M Kshs</strong> (60K average each for feed, equipment, expansion). You add 3 more groups (60 farmers). Total portfolio: <strong>2.4M</strong>. Profit: <strong>800K-1M</strong>.<br><br>
+                        
+                        <strong>Year 3:</strong> 200+ farmers, <strong>8M portfolio</strong>. You're the dominant agricultural lender in the region with <strong>zero marketing cost</strong> (word of mouth + Imfuyo data). Profit: <strong>2.5-3.5M</strong>. ROI on initial 300K: <strong>1,000%+ cumulative</strong>.<br><br>
+                        
+                        <strong>The kicker?</strong> Every loan is backed by real-time production data, verified income streams, and social collateral. Default rates stay below 3%. You're not just a financier — you're building <strong>the agricultural finance infrastructure</strong> for your region.
+                    </div>
+                </div>
+                
+                <div style="background: linear-gradient(135deg, #FEF3C7 0%, #FDE68A 100%); padding: 1.5rem; border-radius: 12px; margin-top: 1.5rem; border: 2px solid var(--accent-yellow);">
+                    <div style="font-family: 'Space Grotesk'; font-size: 1.2rem; font-weight: 700; color: #78350F; margin-bottom: 0.75rem; text-align: center;">
+                        💎 This Pilot is Your Market Entry — The Data is Your Moat
+                    </div>
+                    <div style="font-size: 0.9rem; color: #78350F; line-height: 1.6; text-align: center;">
+                        Other lenders see farmers as risky. You have <strong>Imfuyo tracking</strong> proving they're not. Every farmer you finance becomes a <strong>verified, scored, data-backed customer</strong>. That's an unfair advantage. The 38% ROI in year one is just the price of admission to a <strong>10-year, multi-million shilling opportunity</strong>.
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Panel 6: Comparison Table -->
+            <div class="panel full-width">
+                <div class="panel-header">
+                    <span class="panel-icon">⚖️</span>
+                    Group Model vs Individual Model: Side-by-Side Comparison
                 </div>
                 
                 <table class="comparison-table">
@@ -889,129 +1152,72 @@
                     </thead>
                     <tbody>
                         <tr>
-                            <td>Default Risk</td>
+                            <td><strong>Default Risk</strong></td>
                             <td class="worse">10-15%</td>
                             <td class="better">2-5%</td>
-                            <td class="better">↓ 67% lower</td>
+                            <td class="better">↓ 67% lower risk</td>
                         </tr>
                         <tr>
-                            <td>Monthly Payment/Person</td>
+                            <td><strong>Monthly Payment/Farmer</strong></td>
                             <td class="worse">Kshs. 6,111</td>
-                            <td class="better" id="compPerFarmer">Kshs. 1,200</td>
-                            <td class="better" id="compReduction">↓ 80% lighter</td>
+                            <td class="better">Kshs. <span id="compPayment">1,700</span></td>
+                            <td class="better">↓ <span id="compPaymentDiff">72%</span> lighter</td>
                         </tr>
                         <tr>
-                            <td>Income Streams</td>
+                            <td><strong>Income Streams</strong></td>
                             <td class="worse">1 (Milk only)</td>
                             <td class="better">4 (Diversified)</td>
-                            <td class="better">+300% more</td>
+                            <td class="better">+300% more streams</td>
                         </tr>
                         <tr>
-                            <td>Milk Production Growth</td>
-                            <td class="worse">0% (no feed support)</td>
-                            <td class="better" id="compMilkGrowth">+200%</td>
-                            <td class="better">Massive improvement</td>
+                            <td><strong>Financier ROI (12 months)</strong></td>
+                            <td>25-30%</td>
+                            <td class="better"><span id="compFinancierROI">38%</span></td>
+                            <td class="better">+<span id="compFinancierDiff">27%</span> higher</td>
                         </tr>
                         <tr>
-                            <td>Community Support</td>
+                            <td><strong>Community Support</strong></td>
                             <td class="worse">None (isolated)</td>
-                            <td class="better">High (group pressure)</td>
+                            <td class="better">High (peer accountability)</td>
                             <td class="better">Social collateral</td>
                         </tr>
                         <tr>
-                            <td>Asset Ownership</td>
-                            <td class="worse">Individual debt</td>
-                            <td class="better">Shared assets</td>
-                            <td class="better">Lower individual risk</td>
+                            <td><strong>Asset Ownership</strong></td>
+                            <td class="worse">Individual debt burden</td>
+                            <td class="better">Shared group assets</td>
+                            <td class="better">Distributed risk</td>
                         </tr>
                         <tr>
-                            <td>Training & Support</td>
+                            <td><strong>Farmer Monthly Net Income</strong></td>
+                            <td class="worse">~Kshs. 4,000</td>
+                            <td class="better">Kshs. <span id="compFarmerNet">6,100</span></td>
+                            <td class="better">+<span id="compFarmerDiff">53%</span> more income</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Training & Support</strong></td>
                             <td class="worse">Minimal</td>
                             <td class="better">Comprehensive (Billys + Imfuyo)</td>
-                            <td class="better">Continuous improvement</td>
+                            <td class="better">Ongoing capacity building</td>
                         </tr>
                         <tr>
-                            <td>12-Month ROI (Financier)</td>
-                            <td>25-30%</td>
-                            <td class="better" id="compROI">35-40%</td>
-                            <td class="better" id="compROIDiff">+33% higher</td>
+                            <td><strong>Monitoring & Data</strong></td>
+                            <td class="worse">Limited/manual</td>
+                            <td class="better">Real-time (Imfuyo platform)</td>
+                            <td class="better">100% transparency</td>
+                        </tr>
+                        <tr style="background: linear-gradient(135deg, #FEF3C7 0%, #FDE68A 100%);">
+                            <td><strong>Future Growth Potential</strong></td>
+                            <td class="worse">Limited repeat business</td>
+                            <td class="better">Exponential (individual loans, new groups, data products)</td>
+                            <td class="better">10-year portfolio opportunity</td>
                         </tr>
                     </tbody>
                 </table>
-            </div>
-            
-            <!-- Panel 8: Risk Analysis -->
-            <div class="panel two-thirds">
-                <div class="panel-header">
-                    <span class="panel-icon">⚖️</span>
-                    Risk Analysis & Mitigation
-                </div>
                 
-                <div class="metrics-grid">
-                    <div class="metric-card">
-                        <div class="metric-label">Overall Risk Level</div>
-                        <div class="metric-value">
-                            <span class="risk-indicator risk-low">LOW RISK</span>
-                        </div>
-                        <div class="metric-subtext">Multiple safety mechanisms</div>
-                    </div>
-                    <div class="metric-card">
-                        <div class="metric-label">Repayment Rate</div>
-                        <div class="metric-value" id="repaymentRate">96%</div>
-                        <div class="metric-subtext">Group accountability</div>
-                    </div>
-                    <div class="metric-card">
-                        <div class="metric-label">Data Tracking</div>
-                        <div class="metric-value">100%</div>
-                        <div class="metric-subtext">Imfuyo system monitors all</div>
-                    </div>
-                    <div class="metric-card">
-                        <div class="metric-label">Income Stability</div>
-                        <div class="metric-value">HIGH</div>
-                        <div class="metric-subtext">4 revenue streams</div>
-                    </div>
-                </div>
-                
-                <div class="highlight-box" style="margin-top: 1rem;">
-                    <div class="highlight-title">🛡️ Risk Mitigation Strategies:</div>
+                <div class="highlight-box" style="margin-top: 1.5rem;">
+                    <div class="highlight-title">🎯 The Bottom Line</div>
                     <div class="highlight-text">
-                        <strong>1. Group Accountability:</strong> Peer pressure and community support ensure 96%+ repayment<br>
-                        <strong>2. Diversified Income:</strong> 4 streams mean if milk prices drop, breeding/manure/kids compensate<br>
-                        <strong>3. Real-Time Monitoring:</strong> Imfuyo tracks milk production, quality, feeding regimen daily<br>
-                        <strong>4. Guaranteed Offtaker:</strong> Billys committed to buying all quality milk at 70 Kshs/L<br>
-                        <strong>5. Asset Appreciation:</strong> Bucks increase in value as they produce quality offspring<br>
-                        <strong>6. Training Program:</strong> Continuous education improves farmer knowledge & productivity
-                    </div>
-                </div>
-            </div>
-            
-            <!-- Panel 8: Potential Weaknesses -->
-            <div class="panel">
-                <div class="panel-header">
-                    <span class="panel-icon">⚠️</span>
-                    Potential Challenges
-                </div>
-                
-                <div class="help-text" style="background: #FEF3C7; color: #78350F; margin-top: 0;">
-                    <strong>🔍 Where It Could Fall Short:</strong>
-                </div>
-                
-                <div style="margin-top: 1rem; font-size: 0.85rem; line-height: 1.6;">
-                    <p style="margin-bottom: 0.75rem;"><strong>1. Group Dynamics:</strong> Conflicts between members could slow decisions. <em>Mitigation: Clear governance rules, regular meetings.</em></p>
-                    
-                    <p style="margin-bottom: 0.75rem;"><strong>2. Collective Responsibility:</strong> If 2-3 farmers underperform, others may need to cover. <em>Mitigation: Individual tracking, peer mentoring.</em></p>
-                    
-                    <p style="margin-bottom: 0.75rem;"><strong>3. Training Adoption:</strong> Not all farmers may follow feeding/care protocols. <em>Mitigation: Incentives for top performers, data visibility.</em></p>
-                    
-                    <p style="margin-bottom: 0.75rem;"><strong>4. Buck Management:</strong> Shared assets need careful scheduling and care. <em>Mitigation: Rotation system, dedicated keeper, tracking.</em></p>
-                    
-                    <p style="margin-bottom: 0.75rem;"><strong>5. Initial Ramp-Up:</strong> Takes 2 months for full productivity gains. <em>Mitigation: Grace period, interim monitoring.</em></p>
-                </div>
-                
-                <div class="highlight-box" style="background: linear-gradient(135deg, #D1FAE5 0%, #A7F3D0 100%); border-color: var(--accent-green); margin-top: 1rem;">
-                    <div class="highlight-title" style="color: #065F46;">✅ Overall Assessment:</div>
-                    <div class="highlight-text" style="color: #065F46;">
-                        Despite potential challenges, the group model is <strong>significantly superior</strong>. Lower individual burden, diversified income, community support, and data tracking make this the optimal approach. Benefits far outweigh risks.
+                        The group model is <strong>objectively superior</strong> across every metric. Financiers earn more with less risk in year one, and unlock a <strong>10-year growth runway</strong> with proven customers, proprietary data, and product expansion opportunities. Imfuyo builds sustainable facilitation revenue and becomes the trusted data layer. Farmers pay less, earn more, and gain community support. This is a true win-win-win model that transforms individual struggle into collective prosperity — and the 38% year-one ROI is just the beginning.
                     </div>
                 </div>
             </div>
@@ -1021,28 +1227,29 @@
     <script>
         // Global state
         let state = {
+            mode: 'standard',
             totalFloat: 300000,
-            bucksAllocation: 50,
             groupMembers: 20,
             goatsPerFarmer: 3,
             numBucks: 1,
-            currentMilk: 0.5,
             targetMilk: 1.5,
-            monthsToTarget: 2
+            interestRate: 3.0,
+            milkPrice: 70,
+            breedingFee: 400,
+            imfuyoFee: 10
         };
+        
+        // Constants
+        const BUCK_PRICE = 150000;
+        const BUCK_INSURANCE_LOGISTICS_SHED = 50000;
+        const MANURE_PER_DAY = 10;
+        const KID_PRICE = 4000;
+        const BREEDING_RATE = 0.3;
+        const EXTERNAL_FARMERS_PER_BUCK = 20;
+        const TENURE_MONTHS = 12;
         
         // Chart instances
         let milkGrowthChart, projectionChart;
-        
-        // Constants
-        const MILK_PRICE = 70; // Kshs per liter
-        const BREEDING_FEE = 400; // Kshs per service
-        const MANURE_PER_DAY = 10; // Kshs per farmer per day
-        const KID_PRICE = 4000; // Kshs per kid
-        const BREEDING_RATE = 0.3; // 30% of goats breed per quarter
-        const EXTERNAL_FARMERS_PER_BUCK = 20; // External farmers using breeding services
-        const BUCK_PRICE = 100000; // Price per quality buck (FIXED at 100K)
-        const IMFUYO_SERVICE_FEE = 5000; // Per farmer for shelter, tagging, vet, etc.
         
         // Initialize
         document.addEventListener('DOMContentLoaded', function() {
@@ -1050,6 +1257,34 @@
             attachEventListeners();
             updateAll();
         });
+        
+        function switchMode(mode) {
+            state.mode = mode;
+            
+            // Update button states
+            document.querySelectorAll('.mode-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+            
+            // Show/hide sandbox controls
+            if (mode === 'sandbox') {
+                document.getElementById('sandboxControls').style.display = 'flex';
+            } else {
+                document.getElementById('sandboxControls').style.display = 'none';
+                // Reset to standard values
+                state.totalFloat = 300000;
+                state.groupMembers = 20;
+                state.goatsPerFarmer = 3;
+                state.numBucks = 1;
+                state.targetMilk = 1.5;
+                state.interestRate = 3.0;
+                state.milkPrice = 70;
+                state.breedingFee = 400;
+                state.imfuyoFee = 10;
+                updateAll();
+            }
+        }
         
         function initializeCharts() {
             // Milk Growth Chart
@@ -1100,18 +1335,24 @@
             projectionChart = new Chart(projCtx, {
                 type: 'bar',
                 data: {
-                    labels: ['Month 1', 'Month 2', 'Month 3', 'Month 4', 'Month 5', 'Month 6', 'Month 7', 'Month 8', 'Month 9', 'Month 10', 'Month 11', 'Month 12'],
+                    labels: ['M1', 'M2', 'M3', 'M4', 'M5', 'M6', 'M7', 'M8', 'M9', 'M10', 'M11', 'M12'],
                     datasets: [
                         {
                             label: 'Group Income',
-                            data: [80000, 95000, 115000, 135000, 155000, 172000, 172000, 172000, 172000, 172000, 172000, 172000],
+                            data: [],
                             backgroundColor: '#10B981',
                             borderRadius: 6
                         },
                         {
-                            label: 'Group Expenses',
-                            data: [24000, 24000, 24000, 24000, 24000, 24000, 24000, 24000, 24000, 24000, 24000, 24000],
-                            backgroundColor: '#F59E0B',
+                            label: 'Loan Payment',
+                            data: [],
+                            backgroundColor: '#EF4444',
+                            borderRadius: 6
+                        },
+                        {
+                            label: 'Net to Farmers',
+                            data: [],
+                            backgroundColor: '#3B82F6',
                             borderRadius: 6
                         }
                     ]
@@ -1137,13 +1378,6 @@
                                 font: { family: 'DM Sans', size: 11 },
                                 padding: 10
                             }
-                        },
-                        tooltip: {
-                            callbacks: {
-                                label: function(context) {
-                                    return context.dataset.label + ': Kshs. ' + context.parsed.y.toLocaleString();
-                                }
-                            }
                         }
                     }
                 }
@@ -1151,281 +1385,250 @@
         }
         
         function attachEventListeners() {
-            document.getElementById('totalFloat').addEventListener('input', (e) => {
-                state.totalFloat = parseInt(e.target.value);
-                updateAll();
-            });
+            // Sandbox controls
+            const controls = [
+                'totalFloat', 'groupMembers', 'goatsPerFarmer', 'numBucks',
+                'targetMilk', 'interestRate', 'milkPrice', 'breedingFee', 'imfuyoFee'
+            ];
             
-            document.getElementById('bucksAllocation').addEventListener('input', (e) => {
-                state.bucksAllocation = parseInt(e.target.value);
-                updateAll();
-            });
-            
-            document.getElementById('groupMembers').addEventListener('input', (e) => {
-                state.groupMembers = parseInt(e.target.value);
-                updateAll();
-            });
-            
-            document.getElementById('goatsPerFarmer').addEventListener('input', (e) => {
-                state.goatsPerFarmer = parseInt(e.target.value);
-                updateAll();
-            });
-            
-            document.getElementById('numBucks').addEventListener('input', (e) => {
-                state.numBucks = parseInt(e.target.value);
-                updateAll();
-            });
-            
-            document.getElementById('currentMilk').addEventListener('input', (e) => {
-                state.currentMilk = parseFloat(e.target.value);
-                updateAll();
-            });
-            
-            document.getElementById('targetMilk').addEventListener('input', (e) => {
-                state.targetMilk = parseFloat(e.target.value);
-                updateAll();
-            });
-            
-            document.getElementById('monthsToTarget').addEventListener('input', (e) => {
-                state.monthsToTarget = parseInt(e.target.value);
-                updateAll();
+            controls.forEach(control => {
+                const element = document.getElementById(control);
+                if (element) {
+                    element.addEventListener('input', (e) => {
+                        state[control] = control === 'targetMilk' || control === 'interestRate' 
+                            ? parseFloat(e.target.value) 
+                            : parseInt(e.target.value);
+                        updateAll();
+                    });
+                }
             });
         }
         
         function calculateFinancials() {
-            const bucksAmount = state.totalFloat * (state.bucksAllocation / 100);
-            const operationsAmount = state.totalFloat - bucksAmount;
+            // Basic calculations
             const totalGoats = state.groupMembers * state.goatsPerFarmer;
-            const buckCost = BUCK_PRICE;
+            const buckCost = BUCK_PRICE * state.numBucks;
+            const buckInsuranceLogisticsShed = BUCK_INSURANCE_LOGISTICS_SHED;
+            const operationsTotal = state.totalFloat - buckCost - buckInsuranceLogisticsShed;
             
-            // Current vs Target daily milk
-            const currentDailyMilk = totalGoats * state.currentMilk;
-            const targetDailyMilk = totalGoats * state.targetMilk;
+            // Operations breakdown (percentages)
+            const feedAllocation = operationsTotal * 0.40;  // 40% for feed & concentrate
+            const trainingAllocation = operationsTotal * 0.25;  // 25% for training
+            const vetAllocation = operationsTotal * 0.20;  // 20% for vet services
+            const educationAllocation = operationsTotal * 0.15;  // 15% for agribusiness education
             
-            // Income streams (at target)
-            const milkIncome = targetDailyMilk * MILK_PRICE * 30;
-            const breedingIncome = state.numBucks * EXTERNAL_FARMERS_PER_BUCK * BREEDING_FEE;
+            // Income streams
+            const milkIncome = totalGoats * state.targetMilk * state.milkPrice * 30;
+            const breedingIncome = state.numBucks * EXTERNAL_FARMERS_PER_BUCK * state.breedingFee;
             const manureIncome = state.groupMembers * MANURE_PER_DAY * 30;
-            const kidIncome = (totalGoats * BREEDING_RATE * KID_PRICE) / 3; // Quarterly, so divide by 3
-            
+            const kidIncome = (totalGoats * BREEDING_RATE * KID_PRICE) / 3;
             const totalMonthlyIncome = milkIncome + breedingIncome + manureIncome + kidIncome;
             
-            // Loan calculation
-            const loanAmount = state.totalFloat;
-            const interestRate = 0.03; // 3% monthly for group (vs 4.5% individual)
-            const tenure = 12;
-            const monthlyInterest = loanAmount * interestRate;
-            const totalInterest = monthlyInterest * tenure;
-            const totalRepayable = loanAmount + totalInterest;
-            const groupLoanPayment = totalRepayable / tenure;
-            const perFarmerPayment = groupLoanPayment / state.groupMembers;
+            // Loan calculations
+            const monthlyInterest = state.totalFloat * (state.interestRate / 100);
+            const totalInterest = monthlyInterest * TENURE_MONTHS;
+            const totalRepayable = state.totalFloat + totalInterest;
+            const monthlyRepayment = totalRepayable / TENURE_MONTHS;
             
-            // Milk growth progression
-            const milkGrowth = generateMilkGrowth();
+            // Imfuyo fee (on total repayment)
+            const imfuyoTotalEarnings = totalRepayable * (state.imfuyoFee / 100);
+            const imfuyoMonthlyEarnings = imfuyoTotalEarnings / TENURE_MONTHS;
             
-            // Individual farmer breakdown
-            const indivMilkIncome = state.goatsPerFarmer * state.targetMilk * MILK_PRICE * 30;
-            const indivBreedingShare = breedingIncome / state.groupMembers;
-            const indivManureIncome = MANURE_PER_DAY * 30;
-            const indivKidShare = kidIncome / state.groupMembers;
-            const indivTotalIncome = indivMilkIncome + indivBreedingShare + indivManureIncome + indivKidShare;
-            const indivNetIncome = indivTotalIncome - perFarmerPayment;
-            const paymentBurdenPercent = (perFarmerPayment / indivTotalIncome) * 100;
+            // Actual payment from farmers (repayment + Imfuyo fee)
+            const totalMonthlyPayment = monthlyRepayment + imfuyoMonthlyEarnings;
+            const perFarmerPayment = totalMonthlyPayment / state.groupMembers;
             
-            // Operations budget breakdown
-            const totalBuckCost = state.numBucks * BUCK_PRICE;
-            const remainingFloat = state.totalFloat - totalBuckCost;
-            const feedBudget = remainingFloat * 0.40; // 40% for feed
-            const collectionCenter = remainingFloat * 0.25; // 25% for infrastructure
-            const trainingBudget = remainingFloat * 0.15; // 15% for training
-            const vetBudget = remainingFloat * 0.10; // 10% for vet/Imfuyo services
-            const shelterBudget = remainingFloat * 0.10; // 10% for shelter improvements
+            // Financier calculations
+            const financierProfit = totalInterest;
+            const financierROI = (financierProfit / state.totalFloat) * 100;
+            
+            // Farmer calculations
+            const farmerMonthlyIncome = totalMonthlyIncome / state.groupMembers;
+            const farmerNetIncome = farmerMonthlyIncome - perFarmerPayment;
+            const paymentBurdenPercent = (perFarmerPayment / farmerMonthlyIncome) * 100;
+            
+            // 12-month totals
+            const total12MonthIncome = totalMonthlyIncome * TENURE_MONTHS;
+            const total12MonthRepay = totalRepayable;
+            const total12MonthProfit = total12MonthIncome - total12MonthRepay - imfuyoTotalEarnings;
+            const avgMonthlySurplus = total12MonthProfit / TENURE_MONTHS;
             
             return {
-                bucksAmount,
-                operationsAmount,
                 totalGoats,
                 buckCost,
-                currentDailyMilk,
-                targetDailyMilk,
+                buckInsuranceLogisticsShed,
+                operationsTotal,
+                feedAllocation,
+                trainingAllocation,
+                vetAllocation,
+                educationAllocation,
                 milkIncome,
                 breedingIncome,
                 manureIncome,
                 kidIncome,
                 totalMonthlyIncome,
-                groupLoanPayment,
+                monthlyRepayment,
+                totalRepayable,
                 perFarmerPayment,
-                milkGrowth,
-                repaymentRate: 96 - (state.groupMembers > 30 ? 1 : 0), // Slight decrease with larger groups
-                indivMilkIncome,
-                indivBreedingShare,
-                indivManureIncome,
-                indivKidShare,
-                indivTotalIncome,
-                indivNetIncome,
+                imfuyoTotalEarnings,
+                imfuyoMonthlyEarnings,
+                financierProfit,
+                financierROI,
+                farmerMonthlyIncome,
+                farmerNetIncome,
                 paymentBurdenPercent,
-                totalBuckCost,
-                remainingFloat,
-                feedBudget,
-                collectionCenter,
-                trainingBudget,
-                vetBudget,
-                shelterBudget
+                total12MonthIncome,
+                total12MonthRepay,
+                total12MonthProfit,
+                avgMonthlySurplus,
+                totalMonthlyPayment
             };
-        }
-        
-        function generateMilkGrowth() {
-            const months = [];
-            const increment = (state.targetMilk - state.currentMilk) / state.monthsToTarget;
-            
-            for (let i = 0; i <= 6; i++) {
-                if (i <= state.monthsToTarget) {
-                    months.push(parseFloat((state.currentMilk + (increment * i)).toFixed(2)));
-                } else {
-                    months.push(state.targetMilk);
-                }
-            }
-            
-            return months;
         }
         
         function updateAll() {
             const fin = calculateFinancials();
             
-            // Update slider displays
-            document.getElementById('totalFloatValue').textContent = state.totalFloat.toLocaleString();
-            document.getElementById('bucksAllocationValue').textContent = state.bucksAllocation;
-            document.getElementById('groupMembersValue').textContent = state.groupMembers;
-            document.getElementById('goatsPerFarmerValue').textContent = state.goatsPerFarmer;
-            document.getElementById('numBucksValue').textContent = state.numBucks;
-            document.getElementById('currentMilkValue').textContent = state.currentMilk.toFixed(1);
-            document.getElementById('targetMilkValue').textContent = state.targetMilk.toFixed(1);
-            document.getElementById('monthsToTargetValue').textContent = state.monthsToTarget;
+            // Update sandbox value displays
+            if (state.mode === 'sandbox') {
+                document.getElementById('totalFloatValue').textContent = state.totalFloat.toLocaleString();
+                document.getElementById('groupMembersValue').textContent = state.groupMembers;
+                document.getElementById('goatsPerFarmerValue').textContent = state.goatsPerFarmer;
+                document.getElementById('interestRateValue').textContent = state.interestRate.toFixed(1);
+                document.getElementById('milkPriceValue').textContent = state.milkPrice;
+                document.getElementById('targetMilkValue').textContent = state.targetMilk.toFixed(1);
+                document.getElementById('breedingFeeValue').textContent = state.breedingFee;
+                document.getElementById('imfuyoFeeValue').textContent = state.imfuyoFee;
+                document.getElementById('numBucksValue').textContent = state.numBucks;
+            }
             
-            // Update float allocation
-            document.getElementById('bucksAmount').textContent = Math.round(fin.bucksAmount).toLocaleString();
-            document.getElementById('operationsAmount').textContent = Math.round(fin.operationsAmount).toLocaleString();
+            // Update header ROI
+            document.getElementById('headerROI').textContent = fin.financierROI.toFixed(0) + '%';
             
-            // Update group setup
-            document.getElementById('totalGoats').textContent = fin.totalGoats;
-            document.getElementById('totalBuckCost').textContent = Math.round(fin.totalBuckCost).toLocaleString();
-            document.getElementById('remainingFloat').textContent = Math.round(fin.remainingFloat).toLocaleString();
+            // Update float breakdown
+            document.getElementById('buckPurchase').textContent = 'Kshs. ' + fin.buckCost.toLocaleString();
+            document.getElementById('buckInsurance').textContent = 'Kshs. ' + fin.buckInsuranceLogisticsShed.toLocaleString();
+            document.getElementById('operationsTotal').textContent = 'Kshs. ' + Math.round(fin.operationsTotal).toLocaleString();
+            document.getElementById('opsBreakdownTotal').textContent = Math.round(fin.operationsTotal).toLocaleString();
             
-            // Update operations budget breakdown
-            document.getElementById('feedBudget').textContent = 'Kshs. ' + Math.round(fin.feedBudget).toLocaleString();
-            document.getElementById('collectionCenter').textContent = 'Kshs. ' + Math.round(fin.collectionCenter).toLocaleString();
-            document.getElementById('trainingBudget').textContent = 'Kshs. ' + Math.round(fin.trainingBudget).toLocaleString();
-            document.getElementById('vetBudget').textContent = 'Kshs. ' + Math.round(fin.vetBudget).toLocaleString();
-            document.getElementById('shelterBudget').textContent = 'Kshs. ' + Math.round(fin.shelterBudget).toLocaleString();
-            document.getElementById('totalOperations').textContent = Math.round(fin.remainingFloat).toLocaleString();
+            document.getElementById('feedAllocation').textContent = Math.round(fin.feedAllocation).toLocaleString();
+            document.getElementById('trainingAllocation').textContent = Math.round(fin.trainingAllocation).toLocaleString();
+            document.getElementById('vetAllocation').textContent = Math.round(fin.vetAllocation).toLocaleString();
+            document.getElementById('educationAllocation').textContent = Math.round(fin.educationAllocation).toLocaleString();
+            document.getElementById('totalAllocated').textContent = Math.round(fin.operationsTotal).toLocaleString();
             
-            // Update milk production
-            document.getElementById('currentDailyMilk').textContent = fin.currentDailyMilk.toFixed(0);
-            document.getElementById('targetDailyMilk').textContent = fin.targetDailyMilk.toFixed(0);
+            // Update insurance details
+            document.getElementById('insuranceDetails').textContent = 
+                `Insurance (${Math.round(fin.buckInsuranceLogisticsShed * 0.40).toLocaleString()}) + Logistics (${Math.round(fin.buckInsuranceLogisticsShed * 0.20).toLocaleString()}) + Shed (${Math.round(fin.buckInsuranceLogisticsShed * 0.40).toLocaleString()})`;
             
             // Update income streams
             document.getElementById('milkIncome').textContent = 'Kshs. ' + Math.round(fin.milkIncome).toLocaleString();
-            document.getElementById('milkDetails').textContent = `${fin.totalGoats} goats × ${state.targetMilk} L/day × ${MILK_PRICE} Kshs/L × 30 days = Primary revenue stream`;
+            document.getElementById('milkDetails').textContent = 
+                `${fin.totalGoats} goats × ${state.targetMilk} L/day × ${state.milkPrice} Kshs/L × 30 days = Primary revenue`;
             
             document.getElementById('breedingIncome').textContent = 'Kshs. ' + Math.round(fin.breedingIncome).toLocaleString();
-            document.getElementById('breedingDetails').textContent = `${state.numBucks} bucks × ${EXTERNAL_FARMERS_PER_BUCK} external farmers × ${BREEDING_FEE} Kshs/service = Buck asset monetization`;
+            document.getElementById('breedingDetails').textContent = 
+                `${state.numBucks} buck × ${EXTERNAL_FARMERS_PER_BUCK} external farmers × ${state.breedingFee} Kshs/service`;
             
             document.getElementById('manureIncome').textContent = 'Kshs. ' + Math.round(fin.manureIncome).toLocaleString();
-            document.getElementById('manureDetails').textContent = `${state.groupMembers} farmers × ${MANURE_PER_DAY} Kshs/day × 30 days = Organic fertilizer revenue`;
+            document.getElementById('manureDetails').textContent = 
+                `${state.groupMembers} farmers × ${MANURE_PER_DAY} Kshs/day × 30 days`;
             
             document.getElementById('kidIncome').textContent = 'Kshs. ' + Math.round(fin.kidIncome).toLocaleString();
-            document.getElementById('kidDetails').textContent = `${fin.totalGoats} goats × ${(BREEDING_RATE * 100).toFixed(0)}% breeding rate × ${KID_PRICE.toLocaleString()} Kshs/kid ÷ 3 months = Improved genetics`;
+            document.getElementById('kidDetails').textContent = 
+                `${fin.totalGoats} goats × ${(BREEDING_RATE * 100).toFixed(0)}% rate × ${KID_PRICE.toLocaleString()} Kshs ÷ 3 months`;
             
             document.getElementById('totalMonthlyIncome').textContent = Math.round(fin.totalMonthlyIncome).toLocaleString();
-            document.getElementById('groupLoanPayment').textContent = Math.round(fin.groupLoanPayment).toLocaleString();
-            document.getElementById('perFarmerPayment').textContent = Math.round(fin.perFarmerPayment).toLocaleString();
             
-            // Update risk analysis
-            document.getElementById('repaymentRate').textContent = fin.repaymentRate + '%';
+            // Update group metrics
+            document.getElementById('displayGroupMembers').textContent = state.groupMembers;
+            document.getElementById('totalGoats').textContent = fin.totalGoats;
+            document.getElementById('displayNumBucks').textContent = state.numBucks;
+            document.getElementById('displayTargetMilk').textContent = state.targetMilk.toFixed(1) + 'L';
             
-            // Update individual farmer breakdown
-            document.getElementById('individualPayment').textContent = Math.round(fin.perFarmerPayment).toLocaleString();
-            document.getElementById('indivMilkIncome').textContent = Math.round(fin.indivMilkIncome).toLocaleString();
-            document.getElementById('indivMilkCalc').textContent = `${state.goatsPerFarmer} goats × ${state.targetMilk}L/day × ${MILK_PRICE} Kshs × 30 days`;
-            document.getElementById('indivBreedingIncome').textContent = Math.round(fin.indivBreedingShare).toLocaleString();
-            document.getElementById('indivKidIncome').textContent = Math.round(fin.indivKidShare).toLocaleString();
-            document.getElementById('individualTotalIncome').textContent = Math.round(fin.indivTotalIncome).toLocaleString();
-            document.getElementById('individualNetIncome').textContent = Math.round(fin.indivNetIncome).toLocaleString();
-            document.getElementById('paymentInNet').textContent = Math.round(fin.perFarmerPayment).toLocaleString();
+            // Update stakeholder cards
+            // Financier
+            document.getElementById('financierInvestment').textContent = state.totalFloat.toLocaleString();
+            document.getElementById('financierRepayment').textContent = Math.round(fin.totalRepayable).toLocaleString();
+            document.getElementById('financierProfit').textContent = Math.round(fin.financierProfit).toLocaleString();
+            document.getElementById('financierROI').textContent = 'ROI: ' + fin.financierROI.toFixed(0) + '%';
+            document.getElementById('financierMonthly').textContent = Math.round(fin.monthlyRepayment).toLocaleString();
+            document.getElementById('financierRate').textContent = state.interestRate.toFixed(1) + '%/month';
+            
+            // Imfuyo
+            document.getElementById('imfuyoFeePercent').textContent = state.imfuyoFee;
+            document.getElementById('imfuyoEarnings').textContent = Math.round(fin.imfuyoTotalEarnings).toLocaleString();
+            document.getElementById('imfuyoMonthly').textContent = Math.round(fin.imfuyoMonthlyEarnings).toLocaleString();
+            document.getElementById('imfuyoROI').textContent = 'Fee: ' + state.imfuyoFee + '%';
+            
+            // Farmers
+            document.getElementById('farmerMonthlyIncome').textContent = Math.round(fin.farmerMonthlyIncome).toLocaleString();
+            document.getElementById('farmerMonthlyPayment').textContent = Math.round(fin.perFarmerPayment).toLocaleString();
+            document.getElementById('farmerNetIncome').textContent = Math.round(fin.farmerNetIncome).toLocaleString();
+            document.getElementById('totalFarmersNet').textContent = Math.round(fin.farmerNetIncome * state.groupMembers).toLocaleString();
             document.getElementById('paymentBurden').textContent = fin.paymentBurdenPercent.toFixed(0) + '%';
             document.getElementById('keepPercentage').textContent = (100 - fin.paymentBurdenPercent).toFixed(0) + '%';
-            document.getElementById('keepAmount').textContent = Math.round(fin.indivNetIncome).toLocaleString();
+            
+            // Update summary in highlight box
+            document.getElementById('summaryFinancierROI').textContent = fin.financierROI.toFixed(0) + '%';
+            document.getElementById('summaryImfuyoTotal').textContent = Math.round(fin.imfuyoTotalEarnings).toLocaleString();
+            document.getElementById('summaryFarmerNet').textContent = Math.round(fin.farmerNetIncome).toLocaleString();
+            document.getElementById('summaryFarmerPayment').textContent = Math.round(fin.perFarmerPayment).toLocaleString();
+            document.getElementById('totalValueCreated').textContent = Math.round(fin.total12MonthIncome).toLocaleString();
+            
+            // Update 12-month projections
+            document.getElementById('total12MonthIncome').textContent = Math.round(fin.total12MonthIncome).toLocaleString();
+            document.getElementById('total12MonthRepay').textContent = Math.round(fin.total12MonthRepay).toLocaleString();
+            document.getElementById('total12MonthProfit').textContent = Math.round(fin.total12MonthProfit).toLocaleString();
+            document.getElementById('avgMonthlySurplus').textContent = Math.round(fin.avgMonthlySurplus).toLocaleString();
             
             // Update comparison table
-            document.getElementById('compPerFarmer').textContent = 'Kshs. ' + Math.round(fin.perFarmerPayment).toLocaleString();
-            const reduction = ((6111 - fin.perFarmerPayment) / 6111 * 100).toFixed(0);
-            document.getElementById('compReduction').textContent = '↓ ' + reduction + '% lighter';
+            document.getElementById('compPayment').textContent = Math.round(fin.perFarmerPayment).toLocaleString();
+            const paymentReduction = ((6111 - fin.perFarmerPayment) / 6111 * 100).toFixed(0);
+            document.getElementById('compPaymentDiff').textContent = paymentReduction;
             
-            const milkGrowthPercent = ((state.targetMilk - state.currentMilk) / state.currentMilk * 100).toFixed(0);
-            document.getElementById('compMilkGrowth').textContent = '+' + milkGrowthPercent + '%';
+            document.getElementById('compFinancierROI').textContent = fin.financierROI.toFixed(0) + '%';
+            const roiDiff = (fin.financierROI - 27.5).toFixed(0);
+            document.getElementById('compFinancierDiff').textContent = roiDiff;
             
-            // Calculate ROI
-            const totalRevenue = fin.totalMonthlyIncome * 12;
-            const totalCosts = fin.groupLoanPayment * 12;
-            const netProfit = totalRevenue - totalCosts;
-            const roi = (netProfit / state.totalFloat * 100).toFixed(0);
-            document.getElementById('compROI').textContent = roi + '%';
-            document.getElementById('compROIDiff').textContent = '+' + (roi - 27).toFixed(0) + '% higher';
+            document.getElementById('compFarmerNet').textContent = Math.round(fin.farmerNetIncome).toLocaleString();
+            const farmerIncrease = ((fin.farmerNetIncome - 4000) / 4000 * 100).toFixed(0);
+            document.getElementById('compFarmerDiff').textContent = farmerIncrease;
+            
+            // Update beyond month 12 section
+            document.getElementById('month12ROI').textContent = fin.financierROI.toFixed(0) + '%';
+            document.getElementById('summaryYear1Profit').textContent = Math.round(fin.financierProfit).toLocaleString();
             
             // Update charts
             updateCharts(fin);
-            
-            // Update timeline
-            updateTimeline(fin);
         }
         
         function updateCharts(fin) {
             // Update milk growth chart
-            milkGrowthChart.data.datasets[0].data = fin.milkGrowth;
+            const milkProgression = [0.5, 0.7, 1.0, 1.2, 1.4, state.targetMilk, state.targetMilk];
+            milkGrowthChart.data.datasets[0].data = milkProgression;
             milkGrowthChart.update();
             
             // Update projection chart
-            const incomeProgression = [];
-            const currentDaily = fin.totalGoats * state.currentMilk;
+            const incomeData = [];
+            const paymentData = [];
+            const netData = [];
             
-            for (let month = 0; month < 12; month++) {
-                let milkForMonth;
-                if (month < fin.milkGrowth.length) {
-                    milkForMonth = fin.totalGoats * fin.milkGrowth[month] * MILK_PRICE * 30;
-                } else {
-                    milkForMonth = fin.milkIncome;
-                }
+            for (let i = 0; i < 12; i++) {
+                // Income ramps up over first 3 months
+                let monthlyIncome;
+                if (i === 0) monthlyIncome = fin.totalMonthlyIncome * 0.6;
+                else if (i === 1) monthlyIncome = fin.totalMonthlyIncome * 0.8;
+                else monthlyIncome = fin.totalMonthlyIncome;
                 
-                const monthlyTotal = milkForMonth + fin.breedingIncome + fin.manureIncome + 
-                    (month % 3 === 2 ? fin.kidIncome : 0); // Kids sold quarterly
-                
-                incomeProgression.push(Math.round(monthlyTotal));
+                incomeData.push(Math.round(monthlyIncome));
+                paymentData.push(Math.round(fin.totalMonthlyPayment));
+                netData.push(Math.round(monthlyIncome - fin.totalMonthlyPayment));
             }
             
-            projectionChart.data.datasets[0].data = incomeProgression;
-            projectionChart.data.datasets[1].data = Array(12).fill(fin.groupLoanPayment);
+            projectionChart.data.datasets[0].data = incomeData;
+            projectionChart.data.datasets[1].data = paymentData;
+            projectionChart.data.datasets[2].data = netData;
             projectionChart.update();
-        }
-        
-        function updateTimeline(fin) {
-            const timeline = document.getElementById('growthTimeline');
-            
-            const events = [
-                { month: 'Month 0', event: `Float disbursed: Kshs. ${state.totalFloat.toLocaleString()}. Purchase ${state.numBucks} breeding bucks at Kshs. ${BUCK_PRICE.toLocaleString()} each. Begin farmer training with Billys & Imfuyo.` },
-                { month: 'Month 1', event: `Intensive training on feeding regimen, milk quality, goat care. Start improved feed distribution. Milk production begins rising from ${state.currentMilk}L to ${(state.currentMilk + 0.2).toFixed(1)}L per goat.` },
-                { month: 'Month 2', event: `Breeding services begin. Milk production reaches ${state.targetMilk}L per goat/day. Collection center operational with chilling equipment. Group income: Kshs. ${Math.round(fin.totalMonthlyIncome * 0.75).toLocaleString()}.` },
-                { month: 'Month 3', event: `Full productivity achieved! All 4 income streams active. First kids born from improved breeding. Group earning Kshs. ${Math.round(fin.totalMonthlyIncome).toLocaleString()}/month. Loan payments comfortable at Kshs. ${Math.round(fin.perFarmerPayment).toLocaleString()}/farmer.` },
-                { month: 'Month 6', event: `Model fully mature. Consistent milk quality meets Billys standards. ${fin.repaymentRate}% repayment rate. Farmers earning surplus income. External farmers paying for breeding services.` },
-                { month: 'Month 12', event: `Loan fully repaid! Group owns bucks outright (asset worth Kshs. ${(state.numBucks * BUCK_PRICE * 1.2).toLocaleString()} with offspring). Can scale to new groups or individual livestock purchases.` }
-            ];
-            
-            timeline.innerHTML = events.map(e => `
-                <div class="timeline-item">
-                    <div class="timeline-dot"></div>
-                    <div class="timeline-month">${e.month}</div>
-                    <div class="timeline-event">${e.event}</div>
-                </div>
-            `).join('');
         }
     </script>
 </body>
